@@ -3,6 +3,7 @@ import pygame.camera
 import pygame.image
 from time import gmtime, strftime
 from overlay_functions import *
+
 def next_overlay():
     global overlay
     overlay = next(all_overlays)
