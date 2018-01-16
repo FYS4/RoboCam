@@ -1,0 +1,43 @@
+#!/usr/bin/python
+import os
+import pygame, sys
+from gpiozero import Button
+from pygame.locals import *
+import pygame.camera
+from time import gmtime, strftime
+
+import RPi.GPIO as GPIO
+GPIO.setup(23, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+GPIO.setup(25, GPIO.IN, pull_up_down=GPIO.PUD_UP)
+
+width = 640
+height = 480
+
+#initialise pygame   
+pygame.init()
+pygame.camera.init()
+cam = pygame.camera.Camera("/dev/video0",(width,height))
+cam.start()
+
+#setup window
+windowSurfaceObj = pygame.display.set_mode((width,height),1,16)
+pygame.display.set_caption('Camera')
+
+def TakePicture():
+    print("I took a picture")
+    pygame.image.save(windowSurfaceObj, strftime("RoboBoothPictures/%Y%m%d_%H%M%S_Amsterdam.jpg"))
+
+while(1):
+    if GPIO.input(23) == 0:
+        print("Camera")
+        TakePicture()        
+    elif GPIO.input(25) == 0:
+        print("Filter")
+    else:
+        print("View")
+        image = cam.get_image()
+
+        #display the picture
+        catSurfaceObj = image
+        windowSurfaceObj.blit(catSurfaceObj,(0,0))
+        pygame.display.update()
